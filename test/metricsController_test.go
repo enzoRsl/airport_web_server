@@ -57,7 +57,7 @@ func TestGetMetricsListInRange(t *testing.T) {
 		return metricsList, nil
 	}
 	r := routes.InitRouter()
-	req, _ := http.NewRequest("GET", baseUrl+"/airport/FRA/datatype/pressure/range/?dateDebut=01/01/2022&dateFin=01/01/2022", nil)
+	req, _ := http.NewRequest("GET", baseUrl+"/airport/FRA/datatype/pressure/range/?dateDebut=01/01/2022 20&dateFin=01/01/2022 21", nil)
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)
 

@@ -2,12 +2,15 @@ package routes
 
 import (
 	"airport_web_server/internal/rest_api/controllers"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
 func InitRouter() *gin.Engine {
 	// Set routes
 	router := gin.Default()
+	router.Use(cors.Default())
+
 	apiRouter := router.Group("/api")
 
 	listDataTypeRouter := apiRouter.Group("/datatype")

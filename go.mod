@@ -3,6 +3,7 @@ module airport_web_server
 go 1.19
 
 require (
+	github.com/gin-contrib/cors v1.4.0
 	github.com/gin-gonic/gin v1.8.2
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/stretchr/testify v1.8.1
