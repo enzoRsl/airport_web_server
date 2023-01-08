@@ -54,26 +54,26 @@ func DataTypeMiddleware(c *gin.Context) {
 func RangeMiddleware(c *gin.Context) {
 	println("range middleware")
 	println(c.Query("dateDebut"))
-	dateDebut, err := formatDate(c.Query("dateDebut"))
+	dateDebut, err := formatDateTime(c.Query("dateDebut"))
 	if err != nil {
-		println(err)
+		println(err.Error())
 		c.JSON(400, gin.H{
-			"error": "dateDebut format must be dd/mm/yyyy",
+			"error": "dateDebut format must be dd/mm/yyyy hh",
 		})
 		c.Abort()
 		return
 	}
 
-	dateFin, err := formatDate(c.Query("dateFin"))
+	dateFin, err := formatDateTime(c.Query("dateFin"))
 	if err != nil {
+		println(err.Error())
 		c.JSON(400, gin.H{
-			"error": "dateFin format must be dd/mm/yyyy",
+			"error": "dateFin format must be dd/mm/yyyy hh",
 		})
 		c.Abort()
 
 		return
 	}
-
 	c.Set("dateDebut", dateDebut)
 	c.Set("dateFin", dateFin)
 	c.Next()
@@ -102,6 +102,17 @@ func formatDate(stringDate string) (time.Time, error) {
 		return time.Time{}, errors.New("date is required")
 	}
 	date, err := time.Parse("02/01/2006", stringDate)
+	if err != nil {
+		return time.Time{}, err
+	}
+	return date, nil
+}
+
+func formatDateTime(stringDate string) (time.Time, error) {
+	if stringDate == "" {
+		return time.Time{}, errors.New("date is required")
+	}
+	date, err := time.Parse("02/01/2006 15", stringDate)
 	if err != nil {
 		return time.Time{}, err
 	}
