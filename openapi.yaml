@@ -1,0 +1,122 @@
+openapi: 3.0.0
+info:
+  title: Airport web server
+  description: |-
+    This is an airport web API
+  version: 1.0.11
+
+servers:
+  - url: https://localhost:8086/api
+
+components:
+  schemas:
+    Metrics:
+      properties:
+        Date:
+          type: string
+        Value:
+          type: string
+        Sensor:
+          type: string
+        Airport:
+          type: string
+    listMetrics:
+      type: array
+      items:
+        $ref: '#/components/schemas/Metrics'
+    average:
+      properties:
+        Average:
+          type: number
+        DataType:
+          type: string
+    listAverage:
+      type: array
+      items:
+        $ref: '#/components/schemas/average'
+paths:
+  /airport/{airport}/datatype/{datatype}/range:
+    get:
+      summary: Get metrics in range
+      description: Get metrics in range by airport, datatype and between two dates
+      operationId: GetMetricsListInRange
+      parameters: 
+      - name: dateDebut
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: dateFin
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: airport
+        in: path
+        schema:
+          type: string
+        required: true
+      - name: datatype
+        in: path
+        schema:
+          type: string
+        required: true
+      responses:
+        '200':
+          description: list of metrics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listMetrics'
+        '400':
+          description: Invalid parameters
+        '404':
+          description: datatype or airport not exists
+  /api/datatype:
+    get:
+      summary: Get all datatypes
+      operationId: GetDataTypes
+      responses:
+        '200':
+          description: list of datatypes
+          content:
+            application/json:
+              example: 
+                '["pressure","windSpeed","temperature"]'
+  /api/airport/{airport}/average:
+    get:
+      summary: Get average of all datatypes for one journey
+      operationId: GetAverageMetricsByDay
+      parameters: 
+      - name: date
+        in: query
+        schema:
+          type: string
+        required: true
+      - name: airport
+        in: path
+        schema:
+          type: string
+        required: true
+      responses:
+        '200':
+          description: averages of all datatypes
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listAverage'
+        '404':
+          description: airport not found
+        '400':
+          description: invalid parameters
+  /api/airport:
+    get:
+      summary: Get all airports
+      operationId: GetAirports
+      responses:
+        '200':
+          description: list of airports
+          content:
+            application/json:
+              example: 
+                '["NTE", "FRA"]'

@@ -14,6 +14,7 @@ func GetRedisClient() (*redis.Client, error) {
 		DB:       0,  // use default DB
 	})
 	if _, err := rdb.Ping(ctx).Result(); err != nil {
+		println(err.Error())
 		return nil, err
 	}
 	return rdb, nil

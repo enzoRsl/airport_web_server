@@ -10,15 +10,25 @@ func InitRouter() *gin.Engine {
 	router := gin.Default()
 	apiRouter := router.Group("/api")
 
-	dataTypeRouter := apiRouter.Group("/datatype")
-	dataTypeRouter.GET("/", controllers.GetDataTypes)
+	listDataTypeRouter := apiRouter.Group("/datatype")
+	listDataTypeRouter.GET("/", controllers.GetDataTypes)
 
 	airportRouter := apiRouter.Group("/airport")
 	airportRouter.GET("/", controllers.GetAirports)
 
 	airportIDRouter := airportRouter.Group("/:airport")
 	airportIDRouter.Use(AirportMiddleware)
-	airportRangeRouter := airportIDRouter.Group("/range")
+
+	averageDailyRouter := airportIDRouter.Group("/average")
+	averageDailyRouter.Use(DateMiddleware)
+	averageDailyRouter.GET("/", controllers.GetAverageMetricsByDay)
+
+	dataTypeRouter := airportIDRouter.Group("/datatype/:datatype")
+	dataTypeRouter.Use(DataTypeMiddleware)
+
+	airportRangeRouter := dataTypeRouter.Group("/range")
 	airportRangeRouter.Use(RangeMiddleware)
+	airportRangeRouter.GET("/", controllers.GetMetricsListInRange)
+
 	return router
 }

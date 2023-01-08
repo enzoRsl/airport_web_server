@@ -1,8 +1,14 @@
 package routes
 
-import "github.com/gin-gonic/gin"
+import (
+	"airport_web_server/internal/rest_api/services"
+	"errors"
+	"github.com/gin-gonic/gin"
+	"time"
+)
 
 func AirportMiddleware(c *gin.Context) {
+	println("airport middleware")
 	airport := c.Param("airport")
 	if airport == "" {
 		c.JSON(400, gin.H{
@@ -17,30 +23,87 @@ func AirportMiddleware(c *gin.Context) {
 			"error": "airport must be 3 characters long",
 		})
 		c.Abort()
+
 		return
 	}
+	c.Set("airport", airport)
 	c.Next()
 }
 
-func RangeMiddleware(c *gin.Context) {
-	dateDebut := c.Query("dateDebut")
-	if dateDebut == "" {
+func DataTypeMiddleware(c *gin.Context) {
+	println("datatype middleware")
+	dataType := c.Param("datatype")
+	if dataType == "" {
 		c.JSON(400, gin.H{
-			"error": "dateDebut is required",
+			"error": "dataType is required",
+		})
+		c.Abort()
+		return
+	}
+	dataTypeFound, err := services.GetDataType(dataType)
+	if err != nil {
+		c.JSON(err.Code, err.ErrorMessage)
+		c.Abort()
+		return
+	}
+	c.Set("dataType", dataTypeFound)
+	c.Next()
+
+}
+
+func RangeMiddleware(c *gin.Context) {
+	println("range middleware")
+	println(c.Query("dateDebut"))
+	dateDebut, err := formatDate(c.Query("dateDebut"))
+	if err != nil {
+		println(err)
+		c.JSON(400, gin.H{
+			"error": "dateDebut format must be dd/mm/yyyy",
 		})
 		c.Abort()
 		return
 	}
 
-	dateFin := c.Query("dateFin")
-	if dateFin == "" {
+	dateFin, err := formatDate(c.Query("dateFin"))
+	if err != nil {
 		c.JSON(400, gin.H{
-			"error": "dateFin is required",
+			"error": "dateFin format must be dd/mm/yyyy",
 		})
 		c.Abort()
+
 		return
 	}
+
 	c.Set("dateDebut", dateDebut)
 	c.Set("dateFin", dateFin)
 	c.Next()
+}
+
+func DateMiddleware(c *gin.Context) {
+	println("date middleware")
+	date, err := formatDate(c.Query("date"))
+	if err != nil {
+		println(err)
+		c.JSON(400, gin.H{
+			"error": "date format must be dd/mm/yyyy",
+		})
+		c.Abort()
+
+		return
+	}
+	c.Set("date", date)
+	c.Next()
+}
+
+func formatDate(stringDate string) (time.Time, error) {
+	println("format date middleware")
+	println(stringDate)
+	if stringDate == "" {
+		return time.Time{}, errors.New("date is required")
+	}
+	date, err := time.Parse("02/01/2006", stringDate)
+	if err != nil {
+		return time.Time{}, err
+	}
+	return date, nil
 }

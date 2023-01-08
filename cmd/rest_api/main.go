@@ -6,7 +6,7 @@ import (
 
 func main() {
 	router := routes.InitRouter()
-	err := router.Run()
+	err := router.Run(":8086")
 	if err != nil {
 		panic(err)
 	}
