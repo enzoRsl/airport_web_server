@@ -1,12 +1,13 @@
-import {Component} from '@angular/core';
+import {Component, ViewChild} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import Swal from "sweetalert2";
 import * as moment from 'moment';
+import {LineChartComponent} from "./line-chart/line-chart.component";
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.css'],
 })
 export class AppComponent {
   title = 'front-airport';
@@ -22,6 +23,9 @@ export class AppComponent {
   isAverageForm = false
   dayDate = ""
   listAverages: any[]
+
+  @ViewChild("lineChart") lineChart: LineChartComponent | undefined;
+
 
   constructor(private http: HttpClient) {
     this.listMetrics = []
@@ -77,13 +81,15 @@ export class AppComponent {
     let dateDebut = moment(new Date(this.debut))
     let dateFin = moment(new Date(this.fin))
     let dateDebutString = dateDebut.format("DD/MM/YYYY hh")
-    console.log(dateDebutString)
     let dateFinString = dateFin.format("DD/MM/YYYY hh")
 
     this.http.get<[]>("http://localhost:8086/api/airport/" + this.airportSelected +
       "/datatype/" + this.dataTypeSelected + "/range/?dateDebut=" + dateDebutString + "&dateFin=" + dateFinString).subscribe((data) => {
       this.listMetrics = data
+      this.lineChart?.createChart(data, this.dataTypeSelected)
     })
+
+
 
   }
 

@@ -1,4 +1,6 @@
-  <div style="justify-content: center; display: flex">
+<div style="height: 100vh; background-color: beige">
+
+<div style="justify-content: center; display: flex">
     <h1>Airport web server</h1>
   </div>
   <div style="display: flex; flex-direction: row; justify-content: space-evenly">
@@ -49,6 +51,10 @@
         </button>
       </div>
     </form>
+
+    <app-line-chart #lineChart></app-line-chart>
+
+
     <table style="margin-top: 20px; border: solid 2px; margin-left: auto; margin-right: auto; width: 100%">
       <tr>
         <th>Date</th>
@@ -63,9 +69,12 @@
         <td>{{metrics?.Sensor}}</td>
       </tr>
     </table>
+
   </div>
 
   <div *ngIf="isAverageForm" style="margin-top: 20px">
+    <div *ngFor="let average of listAverages">
+    </div>
     <form>
       <div style="display: flex; flex-direction: row; justify-content: space-evenly">
         <div>
@@ -101,5 +110,7 @@
     </table>
 
   </div>
+
+</div>
 
 
